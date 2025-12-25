@@ -45,7 +45,7 @@ type Game struct {
 	Word          []rune
 	GuessedWords  [][]rune
 	Node          *la.OutputItem
-	Hovered *la.OutputItem
+	Hovered       *la.OutputItem
 	LastClickedAt time.Time
 	LastSubmitted int
 }
