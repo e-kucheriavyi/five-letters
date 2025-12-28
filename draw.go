@@ -266,8 +266,8 @@ func (g *Game) DrawKey(screen *ebiten.Image, node *la.OutputItem) {
 
 	s := float32(4)
 
-	x := node.X+(node.W/2)-((LetterWidth*s)/2)
-	y := node.Y+(node.H/2)-((LetterWidth*s)/2)
+	x := node.X + (node.W / 2) - ((LetterWidth * s) / 2)
+	y := node.Y + (node.H / 2) - ((LetterWidth * s) / 2)
 
 	if id == '-' {
 		DrawBitmap(
@@ -282,8 +282,8 @@ func (g *Game) DrawKey(screen *ebiten.Image, node *la.OutputItem) {
 	} else if id == '+' {
 		txt := "enter"
 		s := float32(1.5)
-		x := node.X + (node.W / 2) - (float32(len(txt)) * LetterWidth * s) / 2
-		y := node.Y + (node.H / 2) - (LetterWidth * 2) / 2
+		x := node.X + (node.W / 2) - (float32(len(txt))*LetterWidth*s)/2
+		y := node.Y + (node.H / 2) - (LetterWidth*2)/2
 		DrawText(
 			screen,
 			"enter",
