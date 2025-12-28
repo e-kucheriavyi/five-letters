@@ -19,7 +19,6 @@ const (
 	keyRowGap       = 8
 	keySide         = (screenW - (keyGap * 11)) / 12
 	attemptItemSide = 58
-	inputDebounce   = 250
 )
 
 type Stage byte
@@ -42,13 +41,14 @@ const (
 var bg = color.RGBA{100, 100, 100, 100}
 
 type Game struct {
-	Stage         Stage
-	Word          []rune
-	GuessedWords  [][]rune
-	Node          *la.OutputItem
-	Hovered       *la.OutputItem
-	LastClickedAt time.Time
-	LastSubmitted int
+	Stage            Stage
+	Word             []rune
+	GuessedWords     [][]rune
+	Node             *la.OutputItem
+	Hovered          *la.OutputItem
+	LastClickedAt    time.Time
+	LastKeyPressedAt time.Time
+	LastSubmitted    int
 }
 
 func NewGame() *Game {
@@ -69,23 +69,6 @@ func (g *Game) Update() error {
 	return nil
 }
 
-func FindHovered(node *la.OutputItem, x, y float32) *la.OutputItem {
-	if strings.HasPrefix(node.Id, "key_") {
-		if Collide(node, x, y) {
-			return node
-		}
-	}
-
-	for _, child := range node.Children {
-		hovered := FindHovered(child, x, y)
-		if hovered != nil {
-			return hovered
-		}
-	}
-
-	return nil
-}
-
 func Collide(node *la.OutputItem, x, y float32) bool {
 	if node.X > x || node.X+node.W < x {
 		return false
@@ -98,58 +81,41 @@ func Collide(node *la.OutputItem, x, y float32) bool {
 	return true
 }
 
-func (g *Game) IsPressed() bool {
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
-		return true
-	}
-
-	touches := ebiten.TouchIDs()
-
-	return len(touches) > 0
-}
-
-func (g *Game) CursorPosition() (float32, float32) {
-	x, y := ebiten.CursorPosition()
-	if x != 0 && y != 0 {
-		return float32(x), float32(y)
-	}
-
-	touches := ebiten.TouchIDs()
-
-	if len(touches) == 0 {
-		return 0, 0
-	}
-
-	x, y = ebiten.TouchPosition(touches[0])
-
-	return float32(x), float32(y)
-}
-
 func (g *Game) UpdateGame() error {
-	x, y := g.CursorPosition()
+	l := g.InputKey()
 
+	if l != ' ' {
+		g.LastKeyPressedAt = time.Now()
+		return g.HandleInput(l)
+	}
+
+	x, y := g.CursorPosition()
 	g.Hovered = FindHovered(g.Node, float32(x), float32(y))
 
 	isPressed := g.IsPressed()
 
-	if !isPressed {
-		return nil
+	if isPressed {
+		if !g.IsOkToClick() {
+			return nil
+		}
+
+		g.LastClickedAt = time.Now()
+
+		if g.Hovered == nil {
+			return nil
+		}
+
+		tmp := strings.ReplaceAll(g.Hovered.Id, "key_", "")
+
+		l = []rune(tmp)[0]
+
+		return g.HandleInput(l)
 	}
 
-	if time.Since(g.LastClickedAt) < inputDebounce*time.Millisecond {
-		return nil
-	}
+	return nil
+}
 
-	g.LastClickedAt = time.Now()
-
-	if g.Hovered == nil {
-		return nil
-	}
-
-	tmp := strings.ReplaceAll(g.Hovered.Id, "key_", "")
-
-	l := []rune(tmp)[0]
-
+func (g *Game) HandleInput(l rune) error {
 	if l == '-' {
 		return g.HandleBackspace()
 	}
