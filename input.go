@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -61,17 +62,83 @@ func (g *Game) InputKey() rune {
 }
 
 func MapInputToRune(k ebiten.Key) rune {
-	name := ebiten.KeyName(k)
+	name := ""
 
-	if k == ebiten.KeyEnter {
+	switch k {
+	case ebiten.KeyEnter:
 		name = "Enter"
-	} else if k == ebiten.KeyBackspace {
+	case ebiten.KeyBackspace:
 		name = "Backspace"
+	case ebiten.KeyQ:
+		name = "q"
+	case ebiten.KeyW:
+		name = "w"
+	case ebiten.KeyE:
+		name = "e"
+	case ebiten.KeyR:
+		name = "r"
+	case ebiten.KeyT:
+		name = "t"
+	case ebiten.KeyY:
+		name = "y"
+	case ebiten.KeyU:
+		name = "u"
+	case ebiten.KeyI:
+		name = "i"
+	case ebiten.KeyO:
+		name = "o"
+	case ebiten.KeyP:
+		name = "p"
+	case ebiten.KeyBracketLeft:
+		name = "["
+	case ebiten.KeyBracketRight:
+		name = "]"
+	case ebiten.KeyA:
+		name = "a"
+	case ebiten.KeyS:
+		name = "s"
+	case ebiten.KeyD:
+		name = "d"
+	case ebiten.KeyF:
+		name = "f"
+	case ebiten.KeyG:
+		name = "g"
+	case ebiten.KeyH:
+		name = "h"
+	case ebiten.KeyJ:
+		name = "j"
+	case ebiten.KeyK:
+		name = "k"
+	case ebiten.KeyL:
+		name = "l"
+	case ebiten.KeySemicolon:
+		name = ";"
+	case ebiten.KeyQuote:
+		name = "'"
+	case ebiten.KeyZ:
+		name = "z"
+	case ebiten.KeyX:
+		name = "x"
+	case ebiten.KeyC:
+		name = "c"
+	case ebiten.KeyV:
+		name = "v"
+	case ebiten.KeyB:
+		name = "b"
+	case ebiten.KeyN:
+		name = "n"
+	case ebiten.KeyM:
+		name = "m"
+	case ebiten.KeyComma:
+		name = ","
+	case ebiten.KeyPeriod:
+		name = "."
 	}
 
 	r, ok := keymap[name]
 
 	if !ok {
+		fmt.Println(k, name)
 		return ' '
 	}
 	return r
