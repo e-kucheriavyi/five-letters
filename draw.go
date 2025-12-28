@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
@@ -206,14 +207,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) DrawScore(screen *ebiten.Image) {
-	txt := fmt.Sprintf("%d / %d", len(g.GuessedWords), 6)
-
-	s := float32(8)
+	txt := string(g.Word)
+	s := float32(5)
+	if g.IsWordGuessed() {
+		s = 8
+		txt = fmt.Sprintf("%d / %d", len(g.GuessedWords), 6)
+	}
 
 	DrawText(
 		screen,
 		txt,
-		screenW/2-(float32(len(txt))*LetterWidth*s)/2,
+		screenW/2-(float32(utf8.RuneCountInString(txt)-2)*(LetterWidth*s)),
 		screenH/2-LetterWidth*s,
 		s,
 		color.RGBA{255, 255, 255, 255},

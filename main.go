@@ -135,7 +135,7 @@ func (g *Game) UpdateGame() error {
 		return nil
 	}
 
-	if time.Since(g.LastClickedAt) < 400*time.Millisecond {
+	if time.Since(g.LastClickedAt) < 200*time.Millisecond {
 		return nil
 	}
 
@@ -210,7 +210,7 @@ func (g *Game) HandleSubmit() error {
 		return nil
 	}
 
-	if g.IsWordGuessed() {
+	if g.IsWordGuessed() || len(g.GuessedWords) == 6 {
 		g.Stage = SCORE
 		return nil
 	}
